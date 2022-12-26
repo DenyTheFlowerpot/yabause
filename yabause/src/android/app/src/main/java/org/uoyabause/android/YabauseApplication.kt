@@ -55,26 +55,26 @@ class YabauseApplication : MultiDexApplication() {
         ActiveAndroid.initialize(config)
         appContext = applicationContext
 
-        FirebaseApp.initializeApp(applicationContext)
+        //FirebaseApp.initializeApp(applicationContext)
 
         // Log.d(TAG,"Firebase token: " + FirebaseInstanceId.getInstance().getToken() );
     } // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
 
-    /**
-     * Gets the default [Tracker] for this [Application].
-     * @return tracker
-     */
-    @get:Synchronized
-    val defaultTracker: Tracker?
-        get() {
-            if (mTracker == null) {
-                val analytics = GoogleAnalytics.getInstance(this)
-                // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
-                mTracker = analytics.newTracker(R.xml.global_tracker)
-                mTracker!!.enableAdvertisingIdCollection(true)
-            }
-            return mTracker
-        }
+//    /**
+//     * Gets the default [Tracker] for this [Application].
+//     * @return tracker
+//     */
+//    @get:Synchronized
+//    val defaultTracker: Tracker?
+//        get() {
+//            if (mTracker == null) {
+//                val analytics = GoogleAnalytics.getInstance(this)
+//                // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
+//                mTracker = analytics.newTracker(R.xml.global_tracker)
+//                mTracker!!.enableAdvertisingIdCollection(true)
+//            }
+//            return mTracker
+//        }
 
     companion object {
         lateinit var appContext: Context

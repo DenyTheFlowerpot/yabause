@@ -5,7 +5,8 @@ import android.content.res.TypedArray
 import android.util.AttributeSet
 import androidx.preference.DialogPreference
 
-class InputSettingPreference : DialogPreference {
+class InputSettingPreference(context: Context, attributeSet: AttributeSet) : DialogPreference(context, attributeSet) {
+  /*
   constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(
     context,
     attrs,

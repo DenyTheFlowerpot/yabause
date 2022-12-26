@@ -71,15 +71,13 @@ class SettingsActivity : AppCompatActivity() {
         override fun onResume() {
             super.onResume()
             inputManager?.registerInputDeviceListener(this, null)
-            preferenceScreen.sharedPreferences
-                .registerOnSharedPreferenceChangeListener(this)
+            preferenceScreen.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
         }
 
         override fun onPause() {
             super.onPause()
             inputManager?.unregisterInputDeviceListener(this)
-            preferenceScreen.sharedPreferences
-                .unregisterOnSharedPreferenceChangeListener(this)
+            preferenceScreen.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(this)
         }
 
         override fun onDestroy() {
@@ -131,56 +129,57 @@ class SettingsActivity : AppCompatActivity() {
             }
 
             var installLocation = findPreference("pref_install_location") as ListPreference?
-            if (installLocation != null && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-                installLocation.isVisible = false
-            } else {
-
-                val labels: MutableList<CharSequence> = ArrayList()
-                val values: MutableList<CharSequence> = ArrayList()
-
-                val sm = requireActivity().getSystemService(STORAGE_SERVICE) as StorageManager
-                val map: Map<String, String> = when {
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
-                        // Android 11- (API 30)
-                        sm.storageVolumes.mapNotNull { volume ->
-                            val path = volume.directory?.absolutePath ?: return@mapNotNull null
-                            val label = volume.getDescription(requireActivity()) ?: return@mapNotNull null
-                            path to label
-                        }.toMap()
-                    }
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> {
-                        // Android 7-10 (API 24-29)
-                        val getPath = StorageVolume::class.java.getDeclaredMethod("getPath")
-                        sm.storageVolumes.mapNotNull { volume ->
-                            val path = (getPath.invoke(volume) as String?) ?: return@mapNotNull null
-                            val label = volume.getDescription(requireActivity()) ?: return@mapNotNull null
-                            path to label
-                        }.toMap()
-                    }
-                    else -> {
-                        // Android 4-6 (API 14-23)
-                        val getVolumeList = sm.javaClass.getDeclaredMethod("getVolumeList")
-                        (getVolumeList.invoke(sm) as Array<*>).filterNotNull().mapNotNull { volume ->
-                            val getPath = volume.javaClass.getDeclaredMethod("getPath") ?: return@mapNotNull null
-                            val getLabel = volume.javaClass.getDeclaredMethod("getDescription", Context::class.java)
-                            val path = (getPath.invoke(volume) as String?) ?: return@mapNotNull null
-                            val label = (getLabel.invoke(volume, requireActivity()) as String?) ?: return@mapNotNull null
-                            path to label
-                        }.toMap()
-                    }
-                }
-
-                var index = 0
-                map.forEach() { _, label ->
-                    labels.add(label)
-                    values.add(index.toString())
-                    index++
-                }
-
-                installLocation!!.entries = labels.toTypedArray()
-                installLocation.entryValues = values.toTypedArray()
-                installLocation.summary = installLocation.entry
-            }
+            installLocation?.isVisible = false
+//            if (installLocation != null && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+//                installLocation.isVisible = false
+//            } else {
+//
+//                val labels: MutableList<CharSequence> = ArrayList()
+//                val values: MutableList<CharSequence> = ArrayList()
+//
+//                val sm = requireActivity().getSystemService(STORAGE_SERVICE) as StorageManager
+//                val map: Map<String, String> = when {
+//                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+//                        // Android 11- (API 30)
+//                        sm.storageVolumes.mapNotNull { volume ->
+//                            val path = volume.directory?.absolutePath ?: return@mapNotNull null
+//                            val label = volume.getDescription(requireActivity()) ?: return@mapNotNull null
+//                            path to label
+//                        }.toMap()
+//                    }
+//                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> {
+//                        // Android 7-10 (API 24-29)
+//                        val getPath = StorageVolume::class.java.getDeclaredMethod("getPath")
+//                        sm.storageVolumes.mapNotNull { volume ->
+//                            val path = (getPath.invoke(volume) as String?) ?: return@mapNotNull null
+//                            val label = volume.getDescription(requireActivity()) ?: return@mapNotNull null
+//                            path to label
+//                        }.toMap()
+//                    }
+//                    else -> {
+//                        // Android 4-6 (API 14-23)
+//                        val getVolumeList = sm.javaClass.getDeclaredMethod("getVolumeList")
+//                        (getVolumeList.invoke(sm) as Array<*>).filterNotNull().mapNotNull { volume ->
+//                            val getPath = volume.javaClass.getDeclaredMethod("getPath") ?: return@mapNotNull null
+//                            val getLabel = volume.javaClass.getDeclaredMethod("getDescription", Context::class.java)
+//                            val path = (getPath.invoke(volume) as String?) ?: return@mapNotNull null
+//                            val label = (getLabel.invoke(volume, requireActivity()) as String?) ?: return@mapNotNull null
+//                            path to label
+//                        }.toMap()
+//                    }
+//                }
+//
+//                var index = 0
+//                map.forEach() { _, label ->
+//                    labels.add(label)
+//                    values.add(index.toString())
+//                    index++
+//                }
+//
+//                installLocation!!.entries = labels.toTypedArray()
+//                installLocation.entryValues = values.toTypedArray()
+//                installLocation.summary = installLocation.entry
+//            }
 
             var inputsetting1 = findPreference("pref_player1_inputdef_file") as InputSettingPreference?
             inputsetting1!!.setPlayerAndFilename(0, "keymap")
@@ -425,7 +424,7 @@ class SettingsActivity : AppCompatActivity() {
 
             val devicekey = "pref_" + player + "_inputdevice"
             val defkey = "pref_" + player + "_inputdef_file"
-            val sharedPref = PreferenceManager.getDefaultSharedPreferences(activity)
+            val sharedPref = PreferenceManager.getDefaultSharedPreferences(requireActivity())
             val res = resources
             val padm = PadManager.padManager
             val input_device =

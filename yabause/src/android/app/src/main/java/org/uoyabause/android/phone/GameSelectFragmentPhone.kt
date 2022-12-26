@@ -146,6 +146,7 @@ class GameSelectFragmentPhone : Fragment(),
     private lateinit var progressBar: View
     private lateinit var progressMessage: TextView
     private var isBackGroundComplete = false
+    private var refreshLevel = 0
 
     private val alphabet = arrayOf(
         "A",
@@ -234,9 +235,9 @@ class GameSelectFragmentPhone : Fragment(),
             fab.visibility = View.GONE
         }
 
-        if( adHeight != 0 ) {
-            onAdViewIsShown(adHeight)
-        }
+//        if( adHeight != 0 ) {
+//            onAdViewIsShown(adHeight)
+//        }
 
         return rootView
     }
@@ -276,7 +277,7 @@ class GameSelectFragmentPhone : Fragment(),
                     selectGameFile()
                 } else {
                     val sharedPref =
-                        PreferenceManager.getDefaultSharedPreferences(activity)
+                        PreferenceManager.getDefaultSharedPreferences(requireActivity())
                     val lastDir =
                         sharedPref.getString("pref_last_dir", YabauseStorage.storage.gamePath)
                     val fd =
@@ -292,7 +293,7 @@ class GameSelectFragmentPhone : Fragment(),
                 }
 
                 if (checkStoragePermission() == 0) {
-                    updateGameList()
+                    updateGameList(0)
                 }
             }
             R.id.menu_item_login -> if (item.title == getString(R.string.sign_out)) {
@@ -450,108 +451,108 @@ class GameSelectFragmentPhone : Fragment(),
 
         if (BuildConfig.BUILD_TYPE != "pro" && hasDonated == false ) {
 
-                val rn = Math.random()
-                if (rn <= 0.3) {
-                    val uiModeManager =
-                        activity?.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
-                    if (uiModeManager.currentModeType != Configuration.UI_MODE_TYPE_TELEVISION) {
-                        val intent = Intent(
-                            activity,
-                            AdActivity::class.java
-                        )
-                        adActivityLauncher.launch(intent)
-                        // }
-                    } else {
-                        val intent =
-                            Intent(activity, AdActivity::class.java)
-                        adActivityLauncher.launch(intent)
-                    }
-                } else if (rn <= 0.6) {
-                    val intent =
-                        Intent(activity, AdActivity::class.java)
-                    adActivityLauncher.launch(intent)
-                } else {
-
-                    val lastReviewDateTime = prefs.getInt("last_review_date_time",0)
-                    val unixTime = System.currentTimeMillis() / 1000L
-
-                    // ３ヶ月に一度レビューしてもらう
-                    if( (unixTime - lastReviewDateTime) > 60*60*24*30 ) {
-
-                        // 5分以上遊んだ？
-                        if( playtime < 5*60 ) return@registerForActivityResult
-
-                        var manager : ReviewManager? = null
-                        if( BuildConfig.DEBUG ){
-                            manager = FakeReviewManager(requireContext())
-                        }else{
-                            val editor = prefs.edit()
-                            editor.putInt("last_review_date_time",lastReviewDateTime)
-                            editor.commit()
-                            manager = ReviewManagerFactory.create(requireContext())
-                        }
-                        val request = manager.requestReviewFlow()
-                        request.addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                // We got the ReviewInfo object
-                                val reviewInfo = task.result
-                                val flow = manager?.launchReviewFlow(requireActivity(), reviewInfo)
-                                flow?.addOnCompleteListener { _ ->
-
-                                }
-                            } else {
-                                task.getException()?.message?.let {
-                                        it1 -> Log.d( TAG, it1)
-                                }
-                            }
-                        }
-
-                    }else{
-                        val intent =
-                            Intent(activity, AdActivity::class.java)
-                        adActivityLauncher.launch(intent)
-                    }
-                }
+//                val rn = Math.random()
+//                if (rn <= 0.3) {
+//                    val uiModeManager =
+//                        activity?.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+//                    if (uiModeManager.currentModeType != Configuration.UI_MODE_TYPE_TELEVISION) {
+//                        val intent = Intent(
+//                            activity,
+//                            AdActivity::class.java
+//                        )
+//                        adActivityLauncher.launch(intent)
+//                        // }
+//                    } else {
+//                        val intent =
+//                            Intent(activity, AdActivity::class.java)
+//                        adActivityLauncher.launch(intent)
+//                    }
+//                } else if (rn <= 0.6) {
+//                    val intent =
+//                        Intent(activity, AdActivity::class.java)
+//                    adActivityLauncher.launch(intent)
+//                } else {
+//
+//                    val lastReviewDateTime = prefs.getInt("last_review_date_time",0)
+//                    val unixTime = System.currentTimeMillis() / 1000L
+//
+//                    // ３ヶ月に一度レビューしてもらう
+//                    if( (unixTime - lastReviewDateTime) > 60*60*24*30 ) {
+//
+//                        // 5分以上遊んだ？
+//                        if( playtime < 5*60 ) return@registerForActivityResult
+//
+//                        var manager : ReviewManager? = null
+//                        if( BuildConfig.DEBUG ){
+//                            manager = FakeReviewManager(requireContext())
+//                        }else{
+//                            val editor = prefs.edit()
+//                            editor.putInt("last_review_date_time",lastReviewDateTime)
+//                            editor.commit()
+//                            manager = ReviewManagerFactory.create(requireContext())
+//                        }
+//                        val request = manager.requestReviewFlow()
+//                        request.addOnCompleteListener { task ->
+//                            if (task.isSuccessful) {
+//                                // We got the ReviewInfo object
+//                                val reviewInfo = task.result
+//                                val flow = manager?.launchReviewFlow(requireActivity(), reviewInfo)
+//                                flow?.addOnCompleteListener { _ ->
+//
+//                                }
+//                            } else {
+//                                task.getException()?.message?.let {
+//                                        it1 -> Log.d( TAG, it1)
+//                                }
+//                            }
+//                        }
+//
+//                    }else{
+//                        val intent =
+//                            Intent(activity, AdActivity::class.java)
+//                        adActivityLauncher.launch(intent)
+//                    }
+//                }
 
             updateRecent()
 
         } else {
 
-            val rn = Math.random()
-            val lastReviewDateTime = prefs.getInt("last_review_date_time",0)
-            val unixTime = System.currentTimeMillis() / 1000L
-
-            // ３ヶ月に一度レビューしてもらう
-            if( rn < 0.3 && (unixTime - lastReviewDateTime) > 60*60*24*30 ){
-
-                // 5分以上遊んだ？
-                if( playtime < 5*60 ) return@registerForActivityResult
-
-                var manager : ReviewManager? = null
-                if( BuildConfig.DEBUG ){
-                    manager = FakeReviewManager(requireContext())
-                }else{
-                    val editor = prefs.edit()
-                    editor.putInt("last_review_date_time",lastReviewDateTime)
-                    editor.commit()
-                    manager = ReviewManagerFactory.create(requireContext())
-                }
-                val request = manager.requestReviewFlow()
-                request.addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        // We got the ReviewInfo object
-                        val reviewInfo = task.result
-                        val flow = manager.launchReviewFlow(requireActivity(), reviewInfo)
-                        flow.addOnCompleteListener { _ ->
-
-                        }
-                    } else {
-                        task.getException()?.message?.let {
-                                it1 -> Log.d( TAG, it1)
-                        }
-                    }
-                }
-            }
+//            val rn = Math.random()
+//            val lastReviewDateTime = prefs.getInt("last_review_date_time",0)
+//            val unixTime = System.currentTimeMillis() / 1000L
+//
+//            // ３ヶ月に一度レビューしてもらう
+//            if( rn < 0.3 && (unixTime - lastReviewDateTime) > 60*60*24*30 ){
+//
+//                // 5分以上遊んだ？
+//                if( playtime < 5*60 ) return@registerForActivityResult
+//
+//                var manager : ReviewManager? = null
+//                if( BuildConfig.DEBUG ){
+//                    manager = FakeReviewManager(requireContext())
+//                }else{
+//                    val editor = prefs.edit()
+//                    editor.putInt("last_review_date_time",lastReviewDateTime)
+//                    editor.commit()
+//                    manager = ReviewManagerFactory.create(requireContext())
+//                }
+//                val request = manager.requestReviewFlow()
+//                request.addOnCompleteListener { task ->
+//                    if (task.isSuccessful) {
+//                        // We got the ReviewInfo object
+//                        val reviewInfo = task.result
+//                        val flow = manager.launchReviewFlow(requireActivity(), reviewInfo)
+//                        flow.addOnCompleteListener { _ ->
+//
+//                        }
+//                    } else {
+//                        task.getException()?.message?.let {
+//                                it1 -> Log.d( TAG, it1)
+//                        }
+//                    }
+//                }
+//            }
             updateRecent()
         }
     }
@@ -587,9 +588,9 @@ class GameSelectFragmentPhone : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view,savedInstanceState)
         val activity = requireActivity() as AppCompatActivity
-        firebaseAnalytics = FirebaseAnalytics.getInstance(activity)
+        //firebaseAnalytics = FirebaseAnalytics.getInstance(activity)
         val application = activity.application as YabauseApplication
-        tracker = application.defaultTracker
+        //tracker = application.defaultTracker
         val toolbar =
             rootView.findViewById<View>(R.id.toolbar) as Toolbar
         toolbar.setLogo(R.mipmap.ic_launcher)
@@ -612,22 +613,11 @@ class GameSelectFragmentPhone : Fragment(),
                 super.onDrawerOpened(drawerView)
                 // activity.getSupportActionBar().setTitle("bbb");
                 val tx = rootView.findViewById<TextView?>(R.id.menu_title)
-                val uname = presenter.currentUserName
-                if (tx != null && uname != null) {
-                    tx.text = uname
-                } else {
-                    tx.text = ""
-                }
+                tx.text = ""
+
                 val iv =
                     rootView.findViewById<ImageView?>(R.id.navi_header_image)
-                val uri = presenter.currentUserPhoto
-                if (iv != null && uri != null) {
-                    Glide.with(drawerView.context)
-                        .load(uri)
-                        .into(iv)
-                } else {
-                    iv.setImageResource(R.mipmap.ic_launcher)
-                }
+                iv.setImageResource(R.mipmap.ic_launcher)
             }
         }
         // Set the drawer toggle as the DrawerListener
@@ -641,17 +631,21 @@ class GameSelectFragmentPhone : Fragment(),
             navigationView!!.setNavigationItemSelectedListener(this)
         }
 
-        if (presenter.currentUserName != null) {
-            val m = navigationView!!.menu
-            val miLogin = m.findItem(R.id.menu_item_login)
-            miLogin.setTitle(R.string.sign_out)
-        } else {
-            val m = navigationView!!.menu
-            val miLogin = m.findItem(R.id.menu_item_login)
-            miLogin.setTitle(R.string.sign_in)
-        }
+        val miLogin = navigationView!!.menu.findItem(R.id.menu_item_login)
+        miLogin.isVisible = false
+        val miLoginOtherDevices = navigationView!!.menu.findItem(R.id.menu_item_login_to_other)
+        miLoginOtherDevices.isVisible = false
+//        if (presenter.currentUserName != null) {
+//            val m = navigationView!!.menu
+//            val miLogin = m.findItem(R.id.menu_item_login)
+//            miLogin.setTitle(R.string.sign_out)
+//        } else {
+//            val m = navigationView!!.menu
+//            val miLogin = m.findItem(R.id.menu_item_login)
+//            miLogin.setTitle(R.string.sign_in)
+//        }
         if (checkStoragePermission() == 0) {
-            updateGameList()
+            updateGameList(0)
         }
     }
 
@@ -669,8 +663,9 @@ class GameSelectFragmentPhone : Fragment(),
         )
     }
 
-    private fun updateGameList() {
+    private fun updateGameList(refreshLevel: Int) {
         if (observer != null) return
+        this.refreshLevel = refreshLevel
         isBackGroundComplete = false
         val tmpObserver = object : Observer<String> {
             // GithubRepositoryApiCompleteEventEntity eventResult = new GithubRepositoryApiCompleteEventEntity();
@@ -713,27 +708,27 @@ class GameSelectFragmentPhone : Fragment(),
                 tabLayout.setupWithViewPager(viewPager)
 
                 dismissDialog()
-                if (isFirstUpdate) {
-                    isFirstUpdate = false
-                    if (this@GameSelectFragmentPhone.requireActivity().intent!!.getBooleanExtra(
-                            "showPin",
-                            false
-                        )
-                    ) {
-                        ShowPinInFragment.newInstance(presenter).show(
-                            childFragmentManager,
-                            "sample"
-                        )
-                    } else {
-                        presenter.checkSignIn(signInActivityLauncher)
-                    }
-                }
+//                if (isFirstUpdate) {
+//                    isFirstUpdate = false
+//                    if (this@GameSelectFragmentPhone.requireActivity().intent!!.getBooleanExtra(
+//                            "showPin",
+//                            false
+//                        )
+//                    ) {
+//                        ShowPinInFragment.newInstance(presenter).show(
+//                            childFragmentManager,
+//                            "sample"
+//                        )
+//                    } else {
+//                        presenter.checkSignIn(signInActivityLauncher)
+//                    }
+//                }
                 viewPager.adapter!!.notifyDataSetChanged()
                 observer = null
             }
         }
         presenter.updateGameList(refreshLevel, tmpObserver)
-        refreshLevel = 0
+        this.refreshLevel = 0
     }
 
     private fun showRestartMessage() { // need_to_accept
@@ -783,21 +778,12 @@ class GameSelectFragmentPhone : Fragment(),
 
                 val markwon = Markwon.create(this.activity as Context)
 
-                if (Build.VERSION.SDK_INT >= VERSION_CODES.Q) {
-                    val packageName = requireActivity().packageName
-                    val welcomeMessage = resources.getString(
-                        R.string.welcome_11,
-                        "Android/data/$packageName/files/yabause/games",
-                        "Android/data/$packageName/files",
-                    )
-                    markwon.setMarkdown(viewMessage, welcomeMessage)
-                }else {
-                    val welcomeMessage = resources.getString(
-                        R.string.welcome,
-                        YabauseStorage.storage.gamePath
-                    )
-                    markwon.setMarkdown(viewMessage, welcomeMessage)
-                }
+                val welcomeMessage = resources.getString(
+                    R.string.welcome,
+                    YabauseStorage.storage.gamePath
+                )
+                markwon.setMarkdown(viewMessage, welcomeMessage)
+
                 return
             }
         } catch (e: Exception) {
@@ -857,7 +843,6 @@ class GameSelectFragmentPhone : Fragment(),
                     )
                     it.remove()
                     hit = true
-                    it.remove()
                 }
             }
             if (hit) {
@@ -940,7 +925,7 @@ class GameSelectFragmentPhone : Fragment(),
         }
         isFront = true
         if (isBackGroundComplete) {
-            updateGameList()
+            updateGameList(0)
         }
     }
 

@@ -24,15 +24,15 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Point
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.os.*
+import android.provider.Settings
 import android.text.method.LinkMovementMethod
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import androidx.window.layout.WindowMetricsCalculator
@@ -45,8 +45,8 @@ import org.uoyabause.android.tv.GameSelectActivity
 
 class StartupActivity : AppCompatActivity() {
     val TAG = "StartupActivity"
-
-    private var mFirebaseRemoteConfig: FirebaseRemoteConfig? = null
+    var checkStoragePermissionOnReturn = false
+    //private var mFirebaseRemoteConfig: FirebaseRemoteConfig? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,29 +70,51 @@ class StartupActivity : AppCompatActivity() {
         }
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        val googleAPI = GoogleApiAvailability.getInstance()
-        val resultCode = googleAPI.isGooglePlayServicesAvailable(this)
-        if (resultCode != ConnectionResult.SUCCESS) {
-            Log.e(TAG, "This device is not supported.")
-        }
-        // Log.d(TAG, "InstanceID token: " + FirebaseInstanceId.getInstance().token)
-        val auth = FirebaseAuth.getInstance()
-        if (auth.currentUser != null) {
-            // already signed in
-        } else {
-            // not signed in
-        }
+//        val googleAPI = GoogleApiAvailability.getInstance()
+//        val resultCode = googleAPI.isGooglePlayServicesAvailable(this)
+//        if (resultCode != ConnectionResult.SUCCESS) {
+//            Log.e(TAG, "This device is not supported.")
+//        }
+//        // Log.d(TAG, "InstanceID token: " + FirebaseInstanceId.getInstance().token)
+//        val auth = FirebaseAuth.getInstance()
+//        if (auth.currentUser != null) {
+//            // already signed in
+//        } else {
+//            // not signed in
+//        }
+    }
 
-        val r = Runnable {
-            mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
-            mFirebaseRemoteConfig!!.setDefaultsAsync(R.xml.config)
-            val cacheExpiration: Long = 3600 // 1 hour in seconds.
-            mFirebaseRemoteConfig!!.fetch(cacheExpiration)
-                .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        mFirebaseRemoteConfig!!.fetchAndActivate()
-                    }
+    override fun onResume() {
+        super.onResume()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (Environment.isExternalStorageManager()) {
+                doLicenseAgreementIfNeeded()
+            } else {
+                if (checkStoragePermissionOnReturn) {
+                    Toast.makeText(this, "Please enable All files access!", Toast.LENGTH_SHORT).show()
+                    finish()
+                } else {
+                    checkStoragePermissionOnReturn = true
+                    startActivity(Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION))
                 }
+            }
+        } else {
+            doLicenseAgreementIfNeeded()
+        }
+    }
+
+    private fun doLicenseAgreementIfNeeded() {
+        val r = Runnable {
+//            mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
+//            mFirebaseRemoteConfig!!.setDefaultsAsync(R.xml.config)
+//            val cacheExpiration: Long = 3600 // 1 hour in seconds.
+//            mFirebaseRemoteConfig!!.fetch(cacheExpiration)
+//                .addOnCompleteListener(this) { task ->
+//                    if (task.isSuccessful) {
+//                        mFirebaseRemoteConfig!!.fetchAndActivate()
+//                    }
+//                }
 
             val uiModeManager = getSystemService(UI_MODE_SERVICE) as UiModeManager
             val sharedPrefLocal = PreferenceManager.getDefaultSharedPreferences(this@StartupActivity)
@@ -109,9 +131,9 @@ class StartupActivity : AppCompatActivity() {
             val sargs = intent.dataString
             if (sargs != null) {
                 Log.d(TAG, "getDataString = $sargs")
-                if (sargs.contains("//login")) {
-                    i.putExtra("showPin", true)
-                }
+//                if (sargs.contains("//login")) {
+//                    i.putExtra("showPin", true)
+//                }
             }
             val args = intent.data
             if (args != null && !args.pathSegments.isEmpty()) {
@@ -119,6 +141,7 @@ class StartupActivity : AppCompatActivity() {
                 i.data = args
             }
             startActivity(i)
+            finish()
             return@Runnable
         }
 
@@ -128,7 +151,7 @@ class StartupActivity : AppCompatActivity() {
         val v = findViewById<View>(R.id.agree)
         if (agreed) {
             v.visibility = View.GONE
-            Handler(Looper.getMainLooper()).postDelayed(r, 2000)
+            Handler(Looper.getMainLooper()).postDelayed(r, 100)
         } else {
 
             val t2 = findViewById<TextView>(R.id.agree_text)
@@ -142,7 +165,7 @@ class StartupActivity : AppCompatActivity() {
                     commit()
                 }
                 v.visibility = View.GONE
-                Handler(Looper.getMainLooper()).postDelayed(r, 1)
+                Handler(Looper.getMainLooper()).postDelayed(r, 100)
             }
             v.visibility = View.VISIBLE
         }

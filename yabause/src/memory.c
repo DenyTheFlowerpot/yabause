@@ -800,7 +800,7 @@ inline u32 getMemClock(u32 addr) {
   }
   return 0;
 }
-
+u32 getMemClock(u32 addr);
 
 #endif
 

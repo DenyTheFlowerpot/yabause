@@ -84,7 +84,7 @@ class GameSelectPresenter(
     target: Fragment,
     private val yabauseActivityLauncher: ActivityResultLauncher<Intent>,
     listener: GameSelectPresenterListener) {
-    private val mFirebaseAnalytics: FirebaseAnalytics
+    private val mFirebaseAnalytics: FirebaseAnalytics? = null
     private var mGoogleSignInClient: GoogleSignInClient? = null
     private val TAG = "GameSelectPresenter"
     private var tracker: Tracker? = null
@@ -225,7 +225,7 @@ class GameSelectPresenter(
         if (resultCode == Activity.RESULT_OK) {
 
             val bundle = Bundle()
-            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
+            mFirebaseAnalytics?.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
 
             response!!.idpToken
             val token = response.idpToken
@@ -252,9 +252,9 @@ class GameSelectPresenter(
             //    photo_url_ = auth.getCurrentUser().getPhotoUrl();
             // }
             baseref.child(baseurl).child("android_token").setValue(token)
-            FirebaseCrashlytics.getInstance().setUserId(username_ + "_" + currentUser.email)
-            mFirebaseAnalytics.setUserId(username_ + "_" + currentUser.email)
-            mFirebaseAnalytics.setUserProperty("name", username_ + "_" + currentUser.email)
+            //FirebaseCrashlytics.getInstance().setUserId(username_ + "_" + currentUser.email)
+            mFirebaseAnalytics?.setUserId(username_ + "_" + currentUser.email)
+            mFirebaseAnalytics?.setUserProperty("name", username_ + "_" + currentUser.email)
             val activity: Activity? = target_.activity
             val prefs = activity!!.getSharedPreferences("private", Context.MODE_PRIVATE)
             var hasDonated = false
@@ -269,7 +269,7 @@ class GameSelectPresenter(
 
             // startActivity(SignedInActivity.createIntent(this, response));
             // val application = target_.activity!!.application as YabauseApplication
-            FirebaseCrashlytics.getInstance().setUserId(currentUser.displayName + "_" + currentUser.email)
+            //FirebaseCrashlytics.getInstance().setUserId(currentUser.displayName + "_" + currentUser.email)
 
             if (authEmitter != null) {
                 authEmitter!!.onSuccess(currentUser)
@@ -438,7 +438,7 @@ class GameSelectPresenter(
                 val bundle = Bundle()
                 bundle.putString(FirebaseAnalytics.Param.ITEM_ID, gameinfo.product_number)
                 bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, gameinfo.game_title)
-                mFirebaseAnalytics.logEvent(
+                mFirebaseAnalytics?.logEvent(
                     "yab_start_game", bundle
                 )
                 parcelFileDescriptor!!.close()
@@ -664,7 +664,7 @@ class GameSelectPresenter(
                     val bundle = Bundle()
                     bundle.putString(FirebaseAnalytics.Param.ITEM_ID, gameinfo.product_number)
                     bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, gameinfo.game_title)
-                    mFirebaseAnalytics.logEvent(
+                    mFirebaseAnalytics?.logEvent(
                         "yab_start_game", bundle
                     )
                     parcelFileDescriptor1!!.close()
@@ -724,7 +724,7 @@ class GameSelectPresenter(
         item.save()
 
         val application = target_.requireActivity().application as YabauseApplication
-        tracker = application.defaultTracker
+        //tracker = application.defaultTracker
         tracker?.send(
             HitBuilders.EventBuilder()
                 .setCategory("Action")
@@ -734,7 +734,7 @@ class GameSelectPresenter(
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, item.product_number)
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, item.game_title)
-        mFirebaseAnalytics.logEvent(
+        mFirebaseAnalytics?.logEvent(
             "yab_start_game", bundle
         )
 
@@ -772,16 +772,16 @@ class GameSelectPresenter(
             return // Activity has benn detached.
         }
         val check_prefernce = PreferenceManager.getDefaultSharedPreferences(
-            target_.activity)
+            target_.requireActivity())
         val do_not_ask = check_prefernce.getBoolean("pref_dont_ask_signin", false)
         if (do_not_ask == true) {
             val auth = FirebaseAuth.getInstance()
             if (auth.currentUser != null) {
-                FirebaseCrashlytics.getInstance().setUserId(auth.currentUser!!
+                //FirebaseCrashlytics.getInstance().setUserId(auth.currentUser!!
+                //    .displayName + "_" + auth.currentUser!!.email)
+                mFirebaseAnalytics?.setUserId(auth.currentUser!!
                     .displayName + "_" + auth.currentUser!!.email)
-                mFirebaseAnalytics.setUserId(auth.currentUser!!
-                    .displayName + "_" + auth.currentUser!!.email)
-                mFirebaseAnalytics.setUserProperty("name", auth.currentUser!!
+                mFirebaseAnalytics?.setUserProperty("name", auth.currentUser!!
                     .displayName + "_" + auth.currentUser!!.email)
             }
             return
@@ -797,7 +797,7 @@ class GameSelectPresenter(
                 .setView(view)
                 .setPositiveButton(target_.resources.getString(R.string.accept)) { dialog, _ ->
                     val cb = view.findViewById<View>(R.id.checkBox_never_ask) as CheckBox
-                    val sharedPrefwrite = PreferenceManager.getDefaultSharedPreferences(target_.activity)
+                    val sharedPrefwrite = PreferenceManager.getDefaultSharedPreferences(target_.requireActivity())
                     val editor = sharedPrefwrite.edit()
                     editor.putBoolean("pref_dont_ask_signin", cb.isChecked)
                     editor.apply()
@@ -816,7 +816,7 @@ class GameSelectPresenter(
                     val cb = view.findViewById<CheckBox>(R.id.checkBox_never_ask)
                     if (cb != null) {
                         val sharedPrefwrite = PreferenceManager.getDefaultSharedPreferences(
-                            target_.activity)
+                            target_.requireActivity())
                         val editor = sharedPrefwrite.edit()
                         editor.putBoolean("pref_dont_ask_signin", cb.isChecked)
                         editor.apply()
@@ -825,11 +825,11 @@ class GameSelectPresenter(
                 }
             builder.create().show()
         } else {
-            FirebaseCrashlytics.getInstance().setUserId(auth.currentUser!!
+//            FirebaseCrashlytics.getInstance().setUserId(auth.currentUser!!
+//                .displayName + "_" + auth.currentUser!!.email)
+            mFirebaseAnalytics?.setUserId(auth.currentUser!!
                 .displayName + "_" + auth.currentUser!!.email)
-            mFirebaseAnalytics.setUserId(auth.currentUser!!
-                .displayName + "_" + auth.currentUser!!.email)
-            mFirebaseAnalytics.setUserProperty("name", auth.currentUser!!
+            mFirebaseAnalytics?.setUserProperty("name", auth.currentUser!!
                 .displayName + "_" + auth.currentUser!!.email)
         }
     }
@@ -867,7 +867,7 @@ class GameSelectPresenter(
                     val bundle = Bundle()
                     bundle.putString(FirebaseAnalytics.Param.ITEM_ID, gameinfo.product_number)
                     bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, gameinfo.game_title)
-                    mFirebaseAnalytics.logEvent(
+                    mFirebaseAnalytics?.logEvent(
                         "yab_start_game", bundle
                     )
                     val intent = Intent(target_.requireActivity(), Yabause::class.java)
@@ -889,6 +889,6 @@ class GameSelectPresenter(
     init {
         target_ = target
         listener_ = listener
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(target_.requireActivity())
+        //mFirebaseAnalytics = FirebaseAnalytics.getInstance(target_.requireActivity())
     }
 }

@@ -613,8 +613,8 @@ class YabauseStorage private constructor() {
     }
 
     fun generateGameDB(level: Int) {
-        val rtn = updateAllGameStatus()
-        if (level == 0 && rtn == -1) return
+//        val rtn = updateAllGameStatus()
+//        if (level == 0 && rtn == -1) return
         if (level >= 3) {
             GameInfo.deleteAll()
         }
@@ -729,17 +729,17 @@ class YabauseStorage private constructor() {
     }
 
     init {
-        var yabroot = File(YabauseApplication.appContext.getExternalFilesDir(null), "yabause")
+        var yabroot = File(Environment.getExternalStorageDirectory(), "yabause")
 
         // Above version 10
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-            //val oldyabroot = File(Environment.getExternalStorageDirectory(), "yabause")
-            // if (!yabroot.exists() && oldyabroot.exists()) {
-            //    Files.move(oldyabroot.toPath(), yabroot.toPath(), StandardCopyOption.REPLACE_EXISTING)
-            // }
-        } else {
-            yabroot = File(Environment.getExternalStorageDirectory(), "yabause")
-        }
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+//            //val oldyabroot = File(Environment.getExternalStorageDirectory(), "yabause")
+//            // if (!yabroot.exists() && oldyabroot.exists()) {
+//            //    Files.move(oldyabroot.toPath(), yabroot.toPath(), StandardCopyOption.REPLACE_EXISTING)
+//            // }
+//        } else {
+//            yabroot = File(Environment.getExternalStorageDirectory(), "yabause")
+//        }
 
         root = yabroot
 

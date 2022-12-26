@@ -3,6 +3,7 @@
 package org.uoyabause.android
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -179,7 +180,7 @@ class InGamePreference(val gamecode: String) : PreferenceFragmentCompat(), Share
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view.setBackgroundColor(ContextCompat.getColor(activityContext, R.color.default_background))
         return view
@@ -203,7 +204,7 @@ class InGamePreference(val gamecode: String) : PreferenceFragmentCompat(), Share
             return
         }
 
-        val gamePreference = requireContext().getHarmonySharedPreferences(gamecode)
+        val gamePreference = requireContext().getSharedPreferences(gamecode, 0)
 
         val editor = gamePreference.edit()
         editor.putBoolean("pref_fps", sharedPreferences.getBoolean("pref_fps", false))

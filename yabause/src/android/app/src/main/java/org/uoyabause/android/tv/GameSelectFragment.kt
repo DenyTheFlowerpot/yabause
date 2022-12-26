@@ -276,25 +276,25 @@ class GameSelectFragment : BrowseSupportFragment(), FileSelectedListener,
             val prefs = requireActivity().getSharedPreferences("private", Context.MODE_PRIVATE)
             val hasDonated = prefs.getBoolean("donated", false)
             if (hasDonated == false) {
-                val rn = Math.random()
-                if (rn <= 0.5) {
-                    val uiModeManager =
-                        requireActivity().getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
-                    if (uiModeManager.currentModeType != Configuration.UI_MODE_TYPE_TELEVISION) {
-                        if (mInterstitialAd != null) {
-                            mInterstitialAd!!.show(requireActivity())
-                        } else {
-                            val intent = Intent(activity, AdActivity::class.java)
-                            startActivity(intent)
-                        }
-                    } else {
-                        val intent = Intent(activity, AdActivity::class.java)
-                        startActivity(intent)
-                    }
-                } else if (rn > 0.5) {
-                    val intent = Intent(activity, AdActivity::class.java)
-                    startActivity(intent)
-                }
+//                val rn = Math.random()
+//                if (rn <= 0.5) {
+//                    val uiModeManager =
+//                        requireActivity().getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+//                    if (uiModeManager.currentModeType != Configuration.UI_MODE_TYPE_TELEVISION) {
+//                        if (mInterstitialAd != null) {
+//                            mInterstitialAd!!.show(requireActivity())
+//                        } else {
+//                            val intent = Intent(activity, AdActivity::class.java)
+//                            startActivity(intent)
+//                        }
+//                    } else {
+//                        val intent = Intent(activity, AdActivity::class.java)
+//                        startActivity(intent)
+//                    }
+//                } else if (rn > 0.5) {
+//                    val intent = Intent(activity, AdActivity::class.java)
+//                    startActivity(intent)
+//                }
             }
         }
     }
@@ -302,12 +302,12 @@ class GameSelectFragment : BrowseSupportFragment(), FileSelectedListener,
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
         super.onActivityCreated(savedInstanceState)
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity())
+        //mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity())
         val application = requireActivity().application as YabauseApplication
-        mTracker = application.defaultTracker
-        MobileAds.initialize(requireContext())
+        //mTracker = application.defaultTracker
+        //MobileAds.initialize(requireContext())
 
-        requestNewInterstitial()
+        //requestNewInterstitial()
 
         val intent = requireActivity().intent
         val uri = intent.data
@@ -476,26 +476,8 @@ class GameSelectFragment : BrowseSupportFragment(), FileSelectedListener,
                 val markwon = Markwon.create(requireContext()
                 )
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    //val welcomeMessage = resources.getString(
-                    //    R.string.welcome_11
-                    //)
-
-                    val packagename = requireActivity().getPackageName()
-
-
-                    val welcomeMessage = resources.getString(
-                        R.string.welcome_11,
-                        "Android/data/" + packagename + "/files/yabause/games",
-                        "Android/data/" + packagename + "/files",
-                    )
-
-                    markwon.setMarkdown(viewMessage, welcomeMessage)
-
-                }else {
-                    val welcomeMessage = resources.getString(R.string.welcome,YabauseStorage.storage.gamePath)
-                    markwon.setMarkdown(viewMessage, welcomeMessage)
-                }
+                val welcomeMessage = resources.getString(R.string.welcome,YabauseStorage.storage.gamePath)
+                markwon.setMarkdown(viewMessage, welcomeMessage)
 
                 viewMessage.setPadding(64)
 
@@ -803,7 +785,7 @@ class GameSelectFragment : BrowseSupportFragment(), FileSelectedListener,
                     }else{
                         val yabroot = File(storage.rootPath)
                         val sharedPref = PreferenceManager.getDefaultSharedPreferences(
-                            activity
+                            requireActivity()
                         )
                         val last_dir = sharedPref.getString("pref_last_dir", yabroot.path)
                         val fd = FileDialog(requireActivity(), last_dir)

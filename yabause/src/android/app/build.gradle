@@ -19,7 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
 
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.firebase.crashlytics'
+//apply plugin: 'com.google.firebase.crashlytics'
 
 
 android {
@@ -61,18 +61,17 @@ android {
     compileSdkVersion 31
 
     defaultConfig {
-        applicationId "org.devmiyax.yabasanshioro2"
+        applicationId "com.denytheflowerpot.yabasanshiro2"
         minSdkVersion 24
         targetSdkVersion 30
         multiDexEnabled true
         versionCode 52
         versionName '1.9.0'
-        multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.pro
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-/*
+
         externalNativeBuild {
 
             // For ndk-build, instead use ndkBuild {}
@@ -89,7 +88,7 @@ android {
             // libraries Gradle should build and package with your APK.
             abiFilters 'armeabi-v7a'
         }
-*/
+
      }
 
     buildTypes {
@@ -100,11 +99,11 @@ android {
             applicationVariants.all { variant ->
                 renameAPK(variant, defaultConfig, 'R')
             }
-            firebaseCrashlytics {
-                nativeSymbolUploadEnabled true
-                strippedNativeLibsDir  'src/main/jniLibs'
-                unstrippedNativeLibsDir  'src/main/jniLibs'
-            }
+//            firebaseCrashlytics {
+//                nativeSymbolUploadEnabled true
+//                strippedNativeLibsDir  'src/main/jniLibs'
+//                unstrippedNativeLibsDir  'src/main/jniLibs'
+//            }
             ndk{
                 debugSymbolLevel 'FULL'
             }
@@ -122,11 +121,11 @@ android {
             applicationVariants.all { variant ->
                 renameAPK(variant, defaultConfig, 'P')
             }
-            firebaseCrashlytics {
-                nativeSymbolUploadEnabled true
-                strippedNativeLibsDir  'src/main/jniLibs'
-                unstrippedNativeLibsDir  'src/main/jniLibs'
-            }
+//            firebaseCrashlytics {
+//                nativeSymbolUploadEnabled true
+//                strippedNativeLibsDir  'src/main/jniLibs'
+//                unstrippedNativeLibsDir  'src/main/jniLibs'
+//            }
             ndk{
                 debugSymbolLevel 'FULL'
             }
@@ -140,11 +139,11 @@ android {
             packagingOptions {
                 doNotStrip "**/*/*.so"
             }
-            firebaseCrashlytics {
-                nativeSymbolUploadEnabled true
-                strippedNativeLibsDir  'src/main/jniLibs'
-                unstrippedNativeLibsDir  'src/main/jniLibs'
-            }
+//            firebaseCrashlytics {
+//                nativeSymbolUploadEnabled true
+//                strippedNativeLibsDir  'src/main/jniLibs'
+//                unstrippedNativeLibsDir  'src/main/jniLibs'
+//            }
 
         }
     }
@@ -152,13 +151,12 @@ android {
     lintOptions {
         abortOnError false
     }
-/*
+
     externalNativeBuild {
         cmake {
             path '../../../CMakeLists.txt'
         }
     }
-*/
 }
 
 //crashlytics {
@@ -181,7 +179,7 @@ allprojects {
         jcenter()
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven { url 'http://fan-adn.github.io/nendSDK-Android-lib/library' }
+        maven { url 'https://fan-adn.github.io/nendSDK-Android-lib/library' }
 
     }
 }
@@ -281,6 +279,6 @@ dependencies {
 }
 
 // ADD THIS AT THE BOTTOM
-apply plugin: 'com.google.gms.google-services'
+//apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'
 

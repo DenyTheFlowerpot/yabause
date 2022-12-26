@@ -78,7 +78,7 @@ import com.activeandroid.util.IOUtils
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.AuthUI.IdpConfig.GoogleBuilder
 import com.firebase.ui.auth.IdpResponse
-import com.frybits.harmony.getHarmonySharedPreferences
+//import com.frybits.harmony.getHarmonySharedPreferences
 import com.google.android.gms.analytics.HitBuilders.ScreenViewBuilder
 import com.google.android.gms.analytics.Tracker
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -236,8 +236,8 @@ class Yabause : AppCompatActivity(),
 
         startTime = System.currentTimeMillis() / 1000L;
 
-        googleSignInClient = GoogleSignIn.getClient(this,
-            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN).build())
+//        googleSignInClient = GoogleSignIn.getClient(this,
+//            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN).build())
 
         val sharedPref = PreferenceManager.getDefaultSharedPreferences(this@Yabause)
         val lock_landscape = sharedPref.getBoolean("pref_landscape", false)
@@ -248,9 +248,9 @@ class Yabause : AppCompatActivity(),
         }
         inputManager = getSystemService(Context.INPUT_SERVICE) as InputManager
         System.gc()
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+        //firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         val application = application as YabauseApplication
-        tracker = application.defaultTracker
+        //tracker = application.defaultTracker
 
         setContentView(R.layout.main)
 
@@ -670,9 +670,9 @@ class Yabause : AppCompatActivity(),
         val title = item.title.toString()
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "MENU")
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, title)
-        firebaseAnalytics!!.logEvent(
-            FirebaseAnalytics.Event.SELECT_CONTENT, bundle
-        )
+//        firebaseAnalytics!!.logEvent(
+//            FirebaseAnalytics.Event.SELECT_CONTENT, bundle
+//        )
         when (id) {
 /*
             R.id.leaderboard -> {
